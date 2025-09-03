@@ -53,6 +53,21 @@ class TokenType(Enum):
     EOF = ""
 
 
+TOKEN_MAPPING = {
+    "(": TokenType.LEFT_PAREN,
+    ")": TokenType.RIGHT_PAREN,
+    "{": TokenType.LEFT_BRACE,
+    "}": TokenType.RIGHT_BRACE,
+    ",": TokenType.COMMA,
+    ".": TokenType.DOT,
+    "-": TokenType.MINUS,
+    "+": TokenType.PLUS,
+    ";": TokenType.SEMICOLON,
+    "/": TokenType.SLASH,
+    "*": TokenType.STAR,
+}
+
+
 @dataclass
 class Token:
     type: TokenType
@@ -74,14 +89,7 @@ class Scanner:
     def scan(self):
         for idx, line in enumerate(self.source_lines):
             for character in line:
-                match character:
-                    case TokenType.LEFT_PAREN.value:
-                        self.tokens.append(Token(TokenType.LEFT_PAREN, character, None, idx))
-                    case TokenType.RIGHT_PAREN.value:
-                        self.tokens.append(Token(TokenType.RIGHT_PAREN, character, None, idx))
-                    case TokenType.LEFT_BRACE.value:
-                        self.tokens.append(Token(TokenType.LEFT_BRACE, character, None, idx))
-                    case TokenType.RIGHT_BRACE.value:
-                        self.tokens.append(Token(TokenType.RIGHT_BRACE, character, None, idx))
+                if character in TOKEN_MAPPING:
+                    self.tokens.append(Token(TOKEN_MAPPING[character], character, None, idx))
 
         self.tokens.append(Token(TokenType.EOF, "", None, len(self.source_lines)))
