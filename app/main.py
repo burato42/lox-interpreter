@@ -20,11 +20,21 @@ def main():
     with open(filename) as file:
         file_contents = file.read()
 
+
+    exit_code = 0
     scanner = Scanner(file_contents)
-    scanner.scan()
-    for token in scanner.tokens:
+    tokens, errors = scanner.scan_tokens()
+
+    if errors:
+        exit_code = 65
+        for error in errors:
+            print(error, file=sys.stderr)
+
+    for token in tokens:
         print(token)
 
+    if exit_code != 0:
+        exit(exit_code)
 
 
 if __name__ == "__main__":
