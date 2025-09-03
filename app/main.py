@@ -1,8 +1,9 @@
 import sys
 
+from app.scanner import Scanner
+
 
 def main():
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
 
     if len(sys.argv) < 3:
@@ -19,10 +20,11 @@ def main():
     with open(filename) as file:
         file_contents = file.read()
 
-    if file_contents:
-        raise NotImplementedError("Scanner not implemented")
-    else:
-        print("EOF  null") # Placeholder, remove this line when implementing the scanner
+    scanner = Scanner(file_contents)
+    scanner.scan()
+    for token in scanner.tokens:
+        print(token)
+
 
 
 if __name__ == "__main__":
