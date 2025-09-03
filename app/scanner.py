@@ -79,5 +79,9 @@ class Scanner:
                         self.tokens.append(Token(TokenType.LEFT_PAREN, character, None, idx))
                     case TokenType.RIGHT_PAREN.value:
                         self.tokens.append(Token(TokenType.RIGHT_PAREN, character, None, idx))
+                    case TokenType.LEFT_BRACE.value:
+                        self.tokens.append(Token(TokenType.LEFT_BRACE, character, None, idx))
+                    case TokenType.RIGHT_BRACE.value:
+                        self.tokens.append(Token(TokenType.RIGHT_BRACE, character, None, idx))
 
         self.tokens.append(Token(TokenType.EOF, "", None, len(self.source_lines)))
