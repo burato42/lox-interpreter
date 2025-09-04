@@ -50,7 +50,7 @@ class TokenType(Enum):
     VAR = auto()
     WHILE = auto()
 
-    EOF = ""
+    EOF = auto()
 
 
 TOKEN_MAPPING = {

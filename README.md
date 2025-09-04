@@ -35,6 +35,10 @@ Note: This section is for stages 2 and beyond.
 3. Commit your changes and run `git push origin master` to submit your solution
    to CodeCrafters. Test output will be streamed to your terminal.
 
+# Development
+For development, you will need to activate dependencies:
+`uv sync`
 
 # Run local tests
-TODO Add own tests for the challenge
+In the root of the project execute the following command: 
+`pytest tests`
