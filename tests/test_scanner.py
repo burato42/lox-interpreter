@@ -67,3 +67,15 @@ class TestScanner:
         assert tokens[5] == Token(TokenType.MINUS, "-", None, 2)
         assert tokens[6] == Token(TokenType.SLASH, "/", None, 2)
         assert tokens[7] == Token(TokenType.EOF, "", None, 2)
+
+    def test_two_char_tokens(self):
+        scanner = Scanner("(>=!=!")
+
+        tokens, errors = scanner.scan_tokens()
+        assert not errors
+        assert len(tokens) == 5
+        assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[1] == Token(TokenType.GREATER_EQUAL, ">=", None, 1)
+        assert tokens[2] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
+        assert tokens[3] == Token(TokenType.BANG, "!", None, 1)
+        assert tokens[4] == Token(TokenType.EOF, "", None, 1)

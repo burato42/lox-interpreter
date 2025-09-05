@@ -65,6 +65,14 @@ TOKEN_MAPPING = {
     ";": TokenType.SEMICOLON,
     "/": TokenType.SLASH,
     "*": TokenType.STAR,
+    "!": TokenType.BANG,
+    "!=": TokenType.BANG_EQUAL,
+    "=": TokenType.EQUAL,
+    "==": TokenType.EQUAL_EQUAL,
+    "<": TokenType.LESS,
+    "<=": TokenType.LESS_EQUAL,
+    ">": TokenType.GREATER,
+    ">=": TokenType.GREATER_EQUAL,
 }
 
 

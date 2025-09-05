@@ -10,11 +10,26 @@ class Scanner:
 
     def scan_tokens(self) -> tuple[list[Token], list[TokenError]]:
         for line_idx, line in enumerate(self.source_lines):
-            for character in line:
+            position_start = 0
+            while position_start < len(line):
+                character = line[position_start]
+
+                # Check for two-character tokens
+                two_char_token = None
+                if position_start + 1 < len(line):
+                    two_chars = character + line[position_start + 1]
+                    if two_chars in TOKEN_MAPPING:
+                        self.tokens.append(Token(TOKEN_MAPPING[two_chars], two_chars, None, line_idx + 1))
+                        position_start += 2
+                        continue
+
+                # Handle single-character tokens
                 if character in TOKEN_MAPPING:
                     self.tokens.append(Token(TOKEN_MAPPING[character], character, None, line_idx + 1))
                 else:
                     self.errors.append(TokenError(character, line_idx + 1))
+
+                position_start += 1
 
         self.tokens.append(Token(TokenType.EOF, "", None, len(self.source_lines)))
         return self.tokens, self.errors
