@@ -1,5 +1,5 @@
 from app.errors import TokenError
-from app.tokenization import Token, TOKEN_MAPPING, TokenType, COMMENT
+from app.tokenization import Token, TOKEN_MAPPING, TokenType, COMMENT, SPACE, TAB
 
 
 class Scanner:
@@ -18,6 +18,7 @@ class Scanner:
                 if position_start + 1 < len(line):
                     two_chars = character + line[position_start + 1]
                     if two_chars == COMMENT:
+                        # If we see the comment we ignore the whole remaining line
                         break
 
                     if two_chars in TOKEN_MAPPING:
@@ -28,6 +29,8 @@ class Scanner:
                 # Handle single-character tokens
                 if character in TOKEN_MAPPING:
                     self.tokens.append(Token(TOKEN_MAPPING[character], character, None, line_idx + 1))
+                elif character in [SPACE, TAB]:
+                    pass  # Ignore whitespace characters
                 else:
                     self.errors.append(TokenError(character, line_idx + 1))
 

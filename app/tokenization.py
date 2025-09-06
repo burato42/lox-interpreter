@@ -76,6 +76,9 @@ TOKEN_MAPPING = {
 }
 
 COMMENT = "//"
+SPACE = " "
+TAB = "\t"
+
 
 @dataclass
 class Token:

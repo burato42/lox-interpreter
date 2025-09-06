@@ -98,3 +98,12 @@ class TestScanner:
         assert tokens[2] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
         assert tokens[3] == Token(TokenType.EOF, "", None, 1)
         assert not errors
+
+    def test_space_characters(self):
+        scanner = Scanner("(\t\n )")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 3
+        assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[1] == Token(TokenType.RIGHT_PAREN, ")", None, 2)
+        assert tokens[2] == Token(TokenType.EOF, "", None, 2)
+        assert not errors
