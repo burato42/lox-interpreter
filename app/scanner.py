@@ -1,5 +1,5 @@
 from app.errors import TokenError
-from app.tokenization import Token, TOKEN_MAPPING, TokenType
+from app.tokenization import Token, TOKEN_MAPPING, TokenType, COMMENT
 
 
 class Scanner:
@@ -15,9 +15,11 @@ class Scanner:
                 character = line[position_start]
 
                 # Check for two-character tokens
-                two_char_token = None
                 if position_start + 1 < len(line):
                     two_chars = character + line[position_start + 1]
+                    if two_chars == COMMENT:
+                        break
+
                     if two_chars in TOKEN_MAPPING:
                         self.tokens.append(Token(TOKEN_MAPPING[two_chars], two_chars, None, line_idx + 1))
                         position_start += 2

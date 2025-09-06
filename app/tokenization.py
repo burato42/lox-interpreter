@@ -75,6 +75,7 @@ TOKEN_MAPPING = {
     ">=": TokenType.GREATER_EQUAL,
 }
 
+COMMENT = "//"
 
 @dataclass
 class Token:

@@ -79,3 +79,22 @@ class TestScanner:
         assert tokens[2] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
         assert tokens[3] == Token(TokenType.BANG, "!", None, 1)
         assert tokens[4] == Token(TokenType.EOF, "", None, 1)
+
+    def test_comments(self):
+        scanner = Scanner("()// Comment")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 3
+        assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[1] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
+        assert tokens[2] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
+
+    def test_division(self):
+        scanner = Scanner("/()// Comment")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 4
+        assert tokens[0] == Token(TokenType.SLASH, "/", None, 1)
+        assert tokens[1] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[2] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
+        assert tokens[3] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
