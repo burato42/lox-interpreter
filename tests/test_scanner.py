@@ -1,6 +1,6 @@
 import pytest
 
-from app.errors import TokenError
+from app.errors import TokenError, UnterminatedStringError
 from app.scanner import Scanner
 from app.tokenization import TokenType, Token
 
@@ -57,6 +57,8 @@ class TestScanner:
 
         assert len(tokens) == 8
         assert len(errors) == 2
+        assert isinstance(errors[0], TokenError)
+        assert isinstance(errors[1], TokenError)
         assert vars(errors[0]) == vars(TokenError("%", 1))
         assert vars(errors[1]) == vars(TokenError("@", 2))
         assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
@@ -106,4 +108,30 @@ class TestScanner:
         assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
         assert tokens[1] == Token(TokenType.RIGHT_PAREN, ")", None, 2)
         assert tokens[2] == Token(TokenType.EOF, "", None, 2)
+        assert not errors
+
+    def test_string_literals(self):
+        scanner = Scanner("\"foo baz\"")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 2
+        assert tokens[0] == Token(TokenType.STRING, "\"foo baz\"", "foo baz", 1)
+        assert tokens[1] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
+
+    def test_unterminated_string(self):
+        scanner = Scanner("\"bar")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 1
+        assert tokens[0] == Token(TokenType.EOF, "", None, 1)
+        assert len(errors) == 1
+        assert isinstance(errors[0], UnterminatedStringError)
+        assert vars(errors[0]) == vars(UnterminatedStringError(1))
+
+
+    def test_string_with_comments(self):
+        scanner = Scanner("\"foo \tbar 123 // hello world!\"")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 2
+        assert tokens[0] == Token(TokenType.STRING, "\"foo \tbar 123 // hello world!\"", "foo \tbar 123 // hello world!", 1)
+        assert tokens[1] == Token(TokenType.EOF, "", None, 1)
         assert not errors
