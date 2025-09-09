@@ -1,4 +1,5 @@
 from typing import Optional
+from dataclasses import dataclass
 
 from app.errors import TokenError, UnterminatedStringError, InterpretationError
 from app.tokenization import Token, TOKEN_MAPPING, TokenType, COMMENT, SPACE, TAB, QUOTE
@@ -13,6 +14,8 @@ class Scanner:
 
 
     def scan_tokens(self) -> tuple[list[Token], list[InterpretationError]]:
+        # TODO current implementation is not straightforward,
+        #  will be refactored when the whole scanner component is ready
         for line_idx, line in enumerate(self.source_lines):
             position_start = 0
             self.quote_start = None
