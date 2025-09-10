@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 
 from app.errors import TokenError, UnterminatedStringError
@@ -134,4 +136,24 @@ class TestScanner:
         assert len(tokens) == 2
         assert tokens[0] == Token(TokenType.STRING, "\"foo \tbar 123 // hello world!\"", "foo \tbar 123 // hello world!", 1)
         assert tokens[1] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
+
+    def test_number_literals(self):
+        scanner = Scanner("42")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 2
+        assert tokens[0] == Token(TokenType.NUMBER, "42", Decimal("42.0"), 1)
+        assert tokens[1] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
+
+    def test_math_sentence(self):
+        # TODO Don't forget to finish the implementation of the test
+        scanner = Scanner("(29+78) > 69 != (\"Success\" != \"Failure\") != (15 >= 52)")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 20
+        assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[1] == Token(TokenType.NUMBER, "29", Decimal("29.0"), 1)
+        assert tokens[2] == Token(TokenType.PLUS, "+", None, 1)
+        assert tokens[3] == Token(TokenType.NUMBER, "78", Decimal("78.0"), 1)
+        assert tokens[19] == Token(TokenType.EOF, "", None, 1)
         assert not errors

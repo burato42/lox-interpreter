@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 from dataclasses import dataclass
 
@@ -11,6 +12,7 @@ class Scanner:
         self.tokens: list[Token] = []
         self.errors: list[InterpretationError] = []
         self.quote_start: Optional[int] = None
+        self.digits: Optional[str] = None
 
 
     def scan_tokens(self) -> tuple[list[Token], list[InterpretationError]]:
@@ -32,6 +34,33 @@ class Scanner:
                     if two_chars in TOKEN_MAPPING:
                         self.tokens.append(Token(TOKEN_MAPPING[two_chars], two_chars, None, line_idx + 1))
                         position_start += 2
+                        continue
+
+                # Find numbers
+                # Super dirty, need to refactor
+                if self.quote_start is None:
+                    if not self.digits and character.isdigit():
+                        self.digits = character
+                        position_start += 1
+                        continue
+                    elif self.digits and (character.isdigit() or character == ".") and position_start == len(line) - 1:
+                        self.digits += character
+                        self.tokens.append(Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
+                        self.digits = None
+                        position_start += 1
+                        continue
+                    elif self.digits and (character.isdigit() or character == "."):
+                        self.digits += character
+                        position_start += 1
+                        continue
+                    elif self.digits and character in [SPACE, TAB]:
+                        self.tokens.append(Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
+                        self.digits = None
+                        position_start += 1
+                        continue
+                    elif self.digits and (character in ["(", ")", "+", "-", "*", "/", ";", ",", "=", ">", "<", "=", "!"] or position_start == len(line) - 1):
+                        self.tokens.append(Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
+                        self.digits = None
                         continue
 
                 # Handle single-character tokens
