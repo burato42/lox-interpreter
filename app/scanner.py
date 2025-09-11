@@ -39,6 +39,13 @@ class Scanner:
                 # Find numbers
                 # Super dirty, need to refactor
                 if self.quote_start is None:
+                    if not self.digits and character.isdigit() and position_start == len(line) - 1:
+                        # a line with one digit character
+                        self.digits = character
+                        self.tokens.append(Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
+                        self.digits = None
+                        position_start += 1
+                        continue
                     if not self.digits and character.isdigit():
                         self.digits = character
                         position_start += 1

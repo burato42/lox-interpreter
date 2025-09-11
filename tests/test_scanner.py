@@ -146,14 +146,38 @@ class TestScanner:
         assert tokens[1] == Token(TokenType.EOF, "", None, 1)
         assert not errors
 
+    def test_different_number_forms(self):
+        scanner = Scanner("1\n2345.6789\n42.0000")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 4
+        assert tokens[0] == Token(TokenType.NUMBER, "1", Decimal("1.0"), 1)
+        assert tokens[1] == Token(TokenType.NUMBER, "2345.6789", Decimal("2345.6789"), 2)
+        assert tokens[2] == Token(TokenType.NUMBER, "42.0000", Decimal("42.0"), 3)
+        assert tokens[3] == Token(TokenType.EOF, "", None, 3)
+        assert not errors
+
     def test_math_sentence(self):
-        # TODO Don't forget to finish the implementation of the test
-        scanner = Scanner("(29+78) > 69 != (\"Success\" != \"Failure\") != (15 >= 52)")
+        scanner = Scanner("(29+78) > 69 != (\"Success\" != \"Failure\") != (15.5 >= 52)")
         tokens, errors = scanner.scan_tokens()
         assert len(tokens) == 20
         assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
         assert tokens[1] == Token(TokenType.NUMBER, "29", Decimal("29.0"), 1)
         assert tokens[2] == Token(TokenType.PLUS, "+", None, 1)
         assert tokens[3] == Token(TokenType.NUMBER, "78", Decimal("78.0"), 1)
+        assert tokens[4] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
+        assert tokens[5] == Token(TokenType.GREATER, ">", None, 1)
+        assert tokens[6] == Token(TokenType.NUMBER, "69", Decimal("69.0"), 1)
+        assert tokens[7] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
+        assert tokens[8] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[9] == Token(TokenType.STRING, "\"Success\"", "Success", 1)
+        assert tokens[10] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
+        assert tokens[11] == Token(TokenType.STRING, "\"Failure\"", "Failure", 1)
+        assert tokens[12] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
+        assert tokens[13] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
+        assert tokens[14] == Token(TokenType.LEFT_PAREN, "(", None, 1)
+        assert tokens[15] == Token(TokenType.NUMBER, "15.5", Decimal("15.5"), 1)
+        assert tokens[16] == Token(TokenType.GREATER_EQUAL, ">=", None, 1)
+        assert tokens[17] == Token(TokenType.NUMBER, "52", Decimal("52.0"), 1)
+        assert tokens[4] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
         assert tokens[19] == Token(TokenType.EOF, "", None, 1)
         assert not errors
