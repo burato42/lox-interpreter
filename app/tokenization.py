@@ -79,7 +79,8 @@ COMMENT = "//"
 SPACE = " "
 TAB = "\t"
 QUOTE = '"'
-
+WHITESPACE_CHARS: list[str] = [SPACE, TAB]
+BORDER_CHARS: list[str] = ["(", ")", "+", "-", "*", "/", ";", ",", "=", ">", "<", "=", "!"]
 
 @dataclass
 class Token:
