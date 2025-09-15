@@ -26,6 +26,7 @@ class TestScanner:
     """
     Test that empty file  just shows the end of the file
     """
+
     def test_empty(self):
         content = ""
         scanner = Scanner(content)
@@ -39,6 +40,7 @@ class TestScanner:
     """
     Test that known single character tokens are parsed correctly
     """
+
     @pytest.mark.parametrize("token_pair", TEST_TOKEN_MAPPING)
     def test_single_character_tokens(self, token_pair):
         character, token_type = token_pair
@@ -50,7 +52,6 @@ class TestScanner:
         assert tokens[0] == Token(token_type, character, None, 1)
         assert tokens[1] == Token(TokenType.EOF, "", None, 1)
         assert not errors
-
 
     def test_presence_of_unknown_sy(self):
         scanner = Scanner("({}%+;\n-/@")
@@ -113,15 +114,15 @@ class TestScanner:
         assert not errors
 
     def test_string_literals(self):
-        scanner = Scanner("\"foo baz\"")
+        scanner = Scanner('"foo baz"')
         tokens, errors = scanner.scan_tokens()
         assert len(tokens) == 2
-        assert tokens[0] == Token(TokenType.STRING, "\"foo baz\"", "foo baz", 1)
+        assert tokens[0] == Token(TokenType.STRING, '"foo baz"', "foo baz", 1)
         assert tokens[1] == Token(TokenType.EOF, "", None, 1)
         assert not errors
 
     def test_unterminated_string(self):
-        scanner = Scanner("\"bar")
+        scanner = Scanner('"bar')
         tokens, errors = scanner.scan_tokens()
         assert len(tokens) == 1
         assert tokens[0] == Token(TokenType.EOF, "", None, 1)
@@ -129,12 +130,16 @@ class TestScanner:
         assert isinstance(errors[0], UnterminatedStringError)
         assert vars(errors[0]) == vars(UnterminatedStringError(1))
 
-
     def test_string_with_comments(self):
-        scanner = Scanner("\"foo \tbar 123 // hello world!\"")
+        scanner = Scanner('"foo \tbar 123 // hello world!"')
         tokens, errors = scanner.scan_tokens()
         assert len(tokens) == 2
-        assert tokens[0] == Token(TokenType.STRING, "\"foo \tbar 123 // hello world!\"", "foo \tbar 123 // hello world!", 1)
+        assert tokens[0] == Token(
+            TokenType.STRING,
+            '"foo \tbar 123 // hello world!"',
+            "foo \tbar 123 // hello world!",
+            1,
+        )
         assert tokens[1] == Token(TokenType.EOF, "", None, 1)
         assert not errors
 
@@ -151,13 +156,15 @@ class TestScanner:
         tokens, errors = scanner.scan_tokens()
         assert len(tokens) == 4
         assert tokens[0] == Token(TokenType.NUMBER, "1", Decimal("1.0"), 1)
-        assert tokens[1] == Token(TokenType.NUMBER, "2345.6789", Decimal("2345.6789"), 2)
+        assert tokens[1] == Token(
+            TokenType.NUMBER, "2345.6789", Decimal("2345.6789"), 2
+        )
         assert tokens[2] == Token(TokenType.NUMBER, "42.0000", Decimal("42.0"), 3)
         assert tokens[3] == Token(TokenType.EOF, "", None, 3)
         assert not errors
 
     def test_math_sentence(self):
-        scanner = Scanner("(29+78) > 69 != (\"Success\" != \"Failure\") != (15.5 >= 52)")
+        scanner = Scanner('(29+78) > 69 != ("Success" != "Failure") != (15.5 >= 52)')
         tokens, errors = scanner.scan_tokens()
         assert len(tokens) == 20
         assert tokens[0] == Token(TokenType.LEFT_PAREN, "(", None, 1)
@@ -169,9 +176,9 @@ class TestScanner:
         assert tokens[6] == Token(TokenType.NUMBER, "69", Decimal("69.0"), 1)
         assert tokens[7] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
         assert tokens[8] == Token(TokenType.LEFT_PAREN, "(", None, 1)
-        assert tokens[9] == Token(TokenType.STRING, "\"Success\"", "Success", 1)
+        assert tokens[9] == Token(TokenType.STRING, '"Success"', "Success", 1)
         assert tokens[10] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
-        assert tokens[11] == Token(TokenType.STRING, "\"Failure\"", "Failure", 1)
+        assert tokens[11] == Token(TokenType.STRING, '"Failure"', "Failure", 1)
         assert tokens[12] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
         assert tokens[13] == Token(TokenType.BANG_EQUAL, "!=", None, 1)
         assert tokens[14] == Token(TokenType.LEFT_PAREN, "(", None, 1)

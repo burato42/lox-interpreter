@@ -20,7 +20,6 @@ def main():
     with open(filename) as file:
         file_contents = file.read()
 
-
     exit_code = 0
     scanner = Scanner(file_contents)
     tokens, errors = scanner.scan_tokens()

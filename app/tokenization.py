@@ -4,7 +4,7 @@ from typing import Any
 
 
 class TokenType(Enum):
-     # Single-character tokens.
+    # Single-character tokens.
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
     LEFT_BRACE = auto()
@@ -80,7 +80,22 @@ SPACE = " "
 TAB = "\t"
 QUOTE = '"'
 WHITESPACE_CHARS: list[str] = [SPACE, TAB]
-BORDER_CHARS: list[str] = ["(", ")", "+", "-", "*", "/", ";", ",", "=", ">", "<", "=", "!"]
+BORDER_CHARS: list[str] = [
+    "(",
+    ")",
+    "+",
+    "-",
+    "*",
+    "/",
+    ";",
+    ",",
+    "=",
+    ">",
+    "<",
+    "=",
+    "!",
+]
+
 
 @dataclass
 class Token:
@@ -92,4 +107,6 @@ class Token:
     def __str__(self) -> str:
         if self.type == TokenType.EOF:
             return f"{TokenType.EOF.name}  null"
-        return f"{self.type.name} {self.lexeme} {self.literal if self.literal else "null"}"
+        return (
+            f"{self.type.name} {self.lexeme} {self.literal if self.literal else 'null'}"
+        )
