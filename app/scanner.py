@@ -57,42 +57,47 @@ class Scanner:
         return self.position_start == len(line) - 1
 
     def _extract_number(self, character: str, line_idx: int, line: str) -> bool:
-        # TODO Refactor this method
         if self.quote_start is None:
-            if not self.digits and character.isdigit() and self._is_last_character(line):
-                # a line with one digit character
+            if self._is_last_character_digital(character, line_idx, line):
+                return True
+
+            if self._is_digit_in_the_middle(character):
+                return True
+
+            if self._is_number_border_character(character, line_idx, line):
+                return True
+        return False
+
+    def _is_last_character_digital(self, character: str, line_idx: int, line: str) -> bool:
+        if (
+                (character.isdigit() and self._is_last_character(line)
+            ) or (self.digits and (character.isdigit() or character == ".") and self._is_last_character(line)
+            )
+        ):
+                # the last or the only digit character in the line
                 self.digits += character
                 self.tokens.append(
                     Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
                 self.digits = ""
                 self.position_start += 1
                 return True
-            elif not self.digits and character.isdigit():
-                self.digits += character
+        return False
+
+    def _is_digit_in_the_middle(self, character: str) -> bool:
+        if character.isdigit() or (self.digits and (character.isdigit() or character == ".")):
+            self.digits += character
+            self.position_start += 1
+            return True
+        return False
+
+    def _is_number_border_character(self, character: str, line_idx: int, line: str) -> bool:
+        if self.digits and (character in BORDER_CHARS + WHITESPACE_CHARS or self._is_last_character(line)):
+            self.tokens.append(
+                Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
+            self.digits = ""
+            if character in WHITESPACE_CHARS:
                 self.position_start += 1
-                return True
-            elif self.digits and (character.isdigit() or character == ".") and self._is_last_character(line):
-                self.digits += character
-                self.tokens.append(
-                    Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
-                self.digits = ""
-                self.position_start += 1
-                return True
-            elif self.digits and (character.isdigit() or character == "."):
-                self.digits += character
-                self.position_start += 1
-                return True
-            elif self.digits and character in WHITESPACE_CHARS:
-                self.tokens.append(
-                    Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
-                self.digits = ""
-                self.position_start += 1
-                return True
-            elif self.digits and (character in BORDER_CHARS or self._is_last_character(line)):
-                self.tokens.append(
-                    Token(TokenType.NUMBER, self.digits, Decimal(str(float(self.digits))), line_idx + 1))
-                self.digits = ""
-                return True
+            return True
         return False
 
     def scan_tokens(self) -> tuple[list[Token], list[InterpretationError]]:
