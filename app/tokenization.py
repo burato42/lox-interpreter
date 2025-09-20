@@ -53,7 +53,7 @@ class TokenType(Enum):
     EOF = auto()
 
 
-TOKEN_MAPPING = {
+TOKEN_MAPPING: dict[str, TokenType] = {
     "(": TokenType.LEFT_PAREN,
     ")": TokenType.RIGHT_PAREN,
     "{": TokenType.LEFT_BRACE,
@@ -95,6 +95,26 @@ BORDER_CHARS: list[str] = [
     "=",
     "!",
 ]
+
+
+RESERVED_WORDS: dict[str, TokenType] = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
 
 
 @dataclass

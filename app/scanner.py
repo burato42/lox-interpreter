@@ -128,10 +128,14 @@ class Scanner:
             return True
         return False
 
-    def _is_last_character_identifierable(self, character: str, line_idx: int, line: str) -> bool:
-        if ((character.isalpha() or character == '_') and self._is_last_character(line)) or (
+    def _is_last_character_identifierable(
+        self, character: str, line_idx: int, line: str
+    ) -> bool:
+        if (
+            (character.isalpha() or character == "_") and self._is_last_character(line)
+        ) or (
             self.identifier
-            and (character.isalnum() or character == '_')
+            and (character.isalnum() or character == "_")
             and self._is_last_character(line)
         ):
             self.identifier += character
@@ -158,8 +162,10 @@ class Scanner:
         return False
 
     def _is_identifier_in_middle(self, character: str) -> bool:
-        if character.isalpha() or character == '_' or (
-            self.identifier and character.isalnum()
+        if (
+            character.isalpha()
+            or character == "_"
+            or (self.identifier and character.isalnum())
         ):
             self.identifier += character
             self.position_start += 1
@@ -173,7 +179,7 @@ class Scanner:
             character in BORDER_CHARS + WHITESPACE_CHARS
             or self._is_last_character(line)
             or character.isalpha()
-            or character == '_'
+            or character == "_"
         ):
             self.tokens.append(
                 Token(
@@ -221,7 +227,6 @@ class Scanner:
             if self._is_identifier_border_character(character, line_idx, line):
                 return True
         return False
-
 
     def scan_tokens(self) -> tuple[list[Token], list[InterpretationError]]:
         # TODO current implementation is not straightforward,
