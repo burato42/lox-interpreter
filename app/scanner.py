@@ -23,6 +23,7 @@ class Scanner:
         self.errors: list[InterpretationError] = []
         self.quote_start: Optional[int] = None
         self.digits: str = ""
+        self.identifier: str = ""
 
     def _scan_line(self, line_idx: int, line: str):
         while self.position_start < len(line):
@@ -41,6 +42,22 @@ class Scanner:
                     )
                     self.position_start += 2
                     continue
+
+            if self._extract_identifier(character, line_idx, line):
+                if self.digits:
+                    # If there is no gap between the number and the identifier
+                    # we just add a number token, so we don't need to process it later
+                    self.tokens.append(
+                        Token(
+                            TokenType.NUMBER,
+                            self.digits,
+                            Decimal(str(float(self.digits))),
+                            line_idx + 1,
+                        )
+                    )
+                    self.digits = ""
+
+                continue
 
             if self._extract_number(character, line_idx, line):
                 continue
@@ -81,7 +98,7 @@ class Scanner:
             if self._is_last_character_digital(character, line_idx, line):
                 return True
 
-            if self._is_digit_in_the_middle(character):
+            if self._is_digit_in_middle(character):
                 return True
 
             if self._is_number_border_character(character, line_idx, line):
@@ -111,11 +128,40 @@ class Scanner:
             return True
         return False
 
-    def _is_digit_in_the_middle(self, character: str) -> bool:
+    def _is_last_character_identifierable(self, character: str, line_idx: int, line: str) -> bool:
+        if ((character.isalpha() or character == '_') and self._is_last_character(line)) or (
+            self.identifier
+            and (character.isalnum() or character == '_')
+            and self._is_last_character(line)
+        ):
+            self.identifier += character
+            self.tokens.append(
+                Token(
+                    TokenType.IDENTIFIER,
+                    self.identifier,
+                    None,
+                    line_idx + 1,
+                )
+            )
+            self.identifier = ""
+            self.position_start += 1
+            return True
+        return False
+
+    def _is_digit_in_middle(self, character: str) -> bool:
         if character.isdigit() or (
             self.digits and (character.isdigit() or character == ".")
         ):
             self.digits += character
+            self.position_start += 1
+            return True
+        return False
+
+    def _is_identifier_in_middle(self, character: str) -> bool:
+        if character.isalpha() or character == '_' or (
+            self.identifier and character.isalnum()
+        ):
+            self.identifier += character
             self.position_start += 1
             return True
         return False
@@ -126,6 +172,8 @@ class Scanner:
         if self.digits and (
             character in BORDER_CHARS + WHITESPACE_CHARS
             or self._is_last_character(line)
+            or character.isalpha()
+            or character == '_'
         ):
             self.tokens.append(
                 Token(
@@ -140,6 +188,40 @@ class Scanner:
                 self.position_start += 1
             return True
         return False
+
+    def _is_identifier_border_character(
+        self, character: str, line_idx: int, line: str
+    ) -> bool:
+        if self.identifier and (
+            character in BORDER_CHARS + WHITESPACE_CHARS
+            or self._is_last_character(line)
+        ):
+            self.tokens.append(
+                Token(
+                    TokenType.IDENTIFIER,
+                    self.identifier,
+                    None,
+                    line_idx + 1,
+                )
+            )
+            self.identifier = ""
+            if character in WHITESPACE_CHARS:
+                self.position_start += 1
+            return True
+        return False
+
+    def _extract_identifier(self, character: str, line_idx: int, line: str) -> bool:
+        if self.quote_start is None:
+            if self._is_last_character_identifierable(character, line_idx, line):
+                return True
+
+            if self._is_identifier_in_middle(character):
+                return True
+
+            if self._is_identifier_border_character(character, line_idx, line):
+                return True
+        return False
+
 
     def scan_tokens(self) -> tuple[list[Token], list[InterpretationError]]:
         # TODO current implementation is not straightforward,

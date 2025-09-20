@@ -188,3 +188,15 @@ class TestScanner:
         assert tokens[4] == Token(TokenType.RIGHT_PAREN, ")", None, 1)
         assert tokens[19] == Token(TokenType.EOF, "", None, 1)
         assert not errors
+
+    def test_identifiers(self):
+        scanner = Scanner("_1236ar 6az baz foo7 bar")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 7
+        assert tokens[0] == Token(TokenType.IDENTIFIER, "_1236ar", None, 1)
+        assert tokens[1] == Token(TokenType.NUMBER, "6", Decimal(float("6.0")), 1)
+        assert tokens[2] == Token(TokenType.IDENTIFIER, "az", None, 1)
+        assert tokens[3] == Token(TokenType.IDENTIFIER, "baz", None, 1)
+        assert tokens[4] == Token(TokenType.IDENTIFIER, "foo7", None, 1)
+        assert tokens[5] == Token(TokenType.IDENTIFIER, "bar", None, 1)
+        assert tokens[6] == Token(TokenType.EOF, "", None, 1)
