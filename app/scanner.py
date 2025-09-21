@@ -1,5 +1,4 @@
 from decimal import Decimal
-from enum import Enum
 from typing import Optional
 
 from app.errors import TokenError, UnterminatedStringError, InterpretationError
@@ -41,7 +40,9 @@ class Scanner:
             character = line[self.position_start]
 
             # Check for two-character tokens (like <=,!=, // etc.)
-            two_char_special_token_present = self._extract_two_char_tokens(character, line_idx, line)
+            two_char_special_token_present = self._extract_two_char_tokens(
+                character, line_idx, line
+            )
             if two_char_special_token_present is None:
                 # We faces comment block
                 break
@@ -206,9 +207,7 @@ class Scanner:
         elif self.quote_start is not None and character == QUOTE:
             lexeme = line[self.quote_start : self.position_start + 1]
             literal = lexeme[1:-1]
-            self.tokens.append(
-                Token(TokenType.STRING, lexeme, literal, line_idx + 1)
-            )
+            self.tokens.append(Token(TokenType.STRING, lexeme, literal, line_idx + 1))
             self.quote_start = None
         elif (
             self.quote_start is not None
