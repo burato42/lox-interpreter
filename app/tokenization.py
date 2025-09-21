@@ -128,5 +128,5 @@ class Token:
         if self.type == TokenType.EOF:
             return f"{TokenType.EOF.name}  null"
         return (
-            f"{self.type.name} {self.lexeme} {self.literal if self.literal else 'null'}"
+            f"{self.type.name} {self.lexeme} {self.literal if self.literal is not None else 'null'}"
         )

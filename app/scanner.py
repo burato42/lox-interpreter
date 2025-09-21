@@ -12,6 +12,7 @@ from app.tokenization import (
     QUOTE,
     BORDER_CHARS,
     WHITESPACE_CHARS,
+    RESERVED_WORDS,
 )
 
 
@@ -139,14 +140,24 @@ class Scanner:
             and self._is_last_character(line)
         ):
             self.identifier += character
-            self.tokens.append(
-                Token(
-                    TokenType.IDENTIFIER,
-                    self.identifier,
-                    None,
-                    line_idx + 1,
+            if self.identifier in RESERVED_WORDS:
+                self.tokens.append(
+                    Token(
+                        RESERVED_WORDS[self.identifier],
+                        self.identifier,
+                        None,
+                        line_idx + 1,
+                    )
                 )
-            )
+            else:
+                self.tokens.append(
+                    Token(
+                        TokenType.IDENTIFIER,
+                        self.identifier,
+                        None,
+                        line_idx + 1,
+                    )
+                )
             self.identifier = ""
             self.position_start += 1
             return True
@@ -202,14 +213,24 @@ class Scanner:
             character in BORDER_CHARS + WHITESPACE_CHARS
             or self._is_last_character(line)
         ):
-            self.tokens.append(
-                Token(
-                    TokenType.IDENTIFIER,
-                    self.identifier,
-                    None,
-                    line_idx + 1,
+            if self.identifier in RESERVED_WORDS:
+                self.tokens.append(
+                    Token(
+                        RESERVED_WORDS[self.identifier],
+                        self.identifier,
+                        None,
+                        line_idx + 1,
+                    )
                 )
-            )
+            else:
+                self.tokens.append(
+                    Token(
+                        TokenType.IDENTIFIER,
+                        self.identifier,
+                        None,
+                        line_idx + 1,
+                    )
+                )
             self.identifier = ""
             if character in WHITESPACE_CHARS:
                 self.position_start += 1

@@ -200,3 +200,76 @@ class TestScanner:
         assert tokens[4] == Token(TokenType.IDENTIFIER, "foo7", None, 1)
         assert tokens[5] == Token(TokenType.IDENTIFIER, "bar", None, 1)
         assert tokens[6] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
+
+    def test_reserved_words(self):
+        scanner = Scanner("var foo if bar else 0")
+        tokens, errors = scanner.scan_tokens()
+        assert len(tokens) == 7
+        assert tokens[0] == Token(TokenType.VAR, "var", None, 1)
+        assert tokens[1] == Token(TokenType.IDENTIFIER, "foo", None, 1)
+        assert tokens[2] == Token(TokenType.IF, "if", None, 1)
+        assert tokens[3] == Token(TokenType.IDENTIFIER, "bar", None, 1)
+        assert tokens[4] == Token(TokenType.ELSE, "else", None, 1)
+        assert tokens[5] == Token(TokenType.NUMBER, "0", Decimal(float("0")), 1)
+        assert tokens[6] == Token(TokenType.EOF, "", None, 1)
+        assert not errors
+
+    def test_code_sample(self):
+        scanner = Scanner("""var result = (a + b) > 7 or "Success" != "Failure" or x >= 5
+        while (result) {
+            var counter = 0
+            counter = counter + 1
+            if (counter == 10) {
+                return nil
+            }
+        }""")
+        tokens, errors = scanner.scan_tokens()
+        assert not errors
+        expected_result = """VAR var null
+IDENTIFIER result null
+EQUAL = null
+LEFT_PAREN ( null
+IDENTIFIER a null
+PLUS + null
+IDENTIFIER b null
+RIGHT_PAREN ) null
+GREATER > null
+NUMBER 7 7.0
+OR or null
+STRING "Success" Success
+BANG_EQUAL != null
+STRING "Failure" Failure
+OR or null
+IDENTIFIER x null
+GREATER_EQUAL >= null
+NUMBER 5 5.0
+WHILE while null
+LEFT_PAREN ( null
+IDENTIFIER result null
+RIGHT_PAREN ) null
+LEFT_BRACE { null
+VAR var null
+IDENTIFIER counter null
+EQUAL = null
+NUMBER 0 0.0
+IDENTIFIER counter null
+EQUAL = null
+IDENTIFIER counter null
+PLUS + null
+NUMBER 1 1.0
+IF if null
+LEFT_PAREN ( null
+IDENTIFIER counter null
+EQUAL_EQUAL == null
+NUMBER 10 10.0
+RIGHT_PAREN ) null
+LEFT_BRACE { null
+RETURN return null
+NIL nil null
+RIGHT_BRACE } null
+RIGHT_BRACE } null
+EOF  null
+        """
+        for token, expect in zip(tokens, expected_result.splitlines()):
+            assert str(token) == expect
