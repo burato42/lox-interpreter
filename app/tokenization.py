@@ -127,6 +127,4 @@ class Token:
     def __str__(self) -> str:
         if self.type == TokenType.EOF:
             return f"{TokenType.EOF.name}  null"
-        return (
-            f"{self.type.name} {self.lexeme} {self.literal if self.literal is not None else 'null'}"
-        )
+        return f"{self.type.name} {self.lexeme} {self.literal if self.literal is not None else 'null'}"
