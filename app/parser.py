@@ -19,3 +19,5 @@ class Parser:
                 yield token.lexeme
             elif token.type == TokenType.NUMBER:
                 yield token.literal
+            elif token.type == TokenType.STRING:
+                yield token.literal

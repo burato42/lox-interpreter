@@ -28,3 +28,14 @@ class TestParser:
         )
         parsed = parser.parse()
         assert list(parsed) == [Decimal("3.14"), Decimal("0.0"), Decimal("42.0")]
+
+    def test_strings(self):
+        parser = Parser(
+            [
+                Token(TokenType.STRING, '"abc"', "abc", 1),
+                Token(TokenType.STRING, '"123"', "123", 1),
+                Token(TokenType.STRING, '"abc*&*U&D>=-123+!="', "abc*&*U&D>=-123+!=", 1),
+            ]
+        )
+        parsed = parser.parse()
+        assert list(parsed) == ["abc", "123", "abc*&*U&D>=-123+!="]
