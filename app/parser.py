@@ -10,9 +10,12 @@ class Parser:
     def parse(self) -> Iterator[Any]:
         for token in self.tokens:
             # Seems overcomplicated
+            # there is a mix of lexemes and literals...
             if token.type == TokenType.TRUE:
                 yield token.lexeme
             elif token.type == TokenType.FALSE:
                 yield token.lexeme
             elif token.type == TokenType.NIL:
                 yield token.lexeme
+            elif token.type == TokenType.NUMBER:
+                yield token.literal

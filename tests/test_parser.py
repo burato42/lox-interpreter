@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 
 from app.parser import Parser
@@ -15,3 +17,14 @@ class TestParser:
         )
         lexemes = parser.parse()
         assert list(lexemes) == ["true", "false", "nil"]
+
+    def test_numbers(self):
+        parser = Parser(
+            [
+                Token(TokenType.NUMBER, "3.14", Decimal("3.14"), 1),
+                Token(TokenType.NUMBER, "0", Decimal("0.0"), 1),
+                Token(TokenType.NUMBER, "42", Decimal("42.0"), 1),
+            ]
+        )
+        parsed = parser.parse()
+        assert list(parsed) == [Decimal("3.14"), Decimal("0.0"), Decimal("42.0")]
