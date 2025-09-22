@@ -44,7 +44,7 @@ class Scanner:
                 character, line_idx, line
             )
             if two_char_special_token_present is None:
-                # We faces comment block
+                # We face comment block
                 break
             elif two_char_special_token_present:
                 continue

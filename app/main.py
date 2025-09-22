@@ -1,5 +1,6 @@
 import sys
 
+from app.parser import Parser
 from app.scanner import Scanner
 
 
@@ -7,13 +8,13 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
 
     if len(sys.argv) < 3:
-        print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
+        print("Usage: ./your_program.sh <command> <filename>\n Available commands: tokenize, parse", file=sys.stderr)
         exit(1)
 
     command = sys.argv[1]
     filename = sys.argv[2]
 
-    if command != "tokenize":
+    if command not in ("tokenize", "parse"):
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)
 
@@ -29,8 +30,15 @@ def main():
         for error in errors:
             print(error, file=sys.stderr)
 
-    for token in tokens:
-        print(token)
+    if command == "tokenize":
+        for token in tokens:
+            print(token)
+
+    if command == "parse":
+        parser = Parser(tokens)
+        lexemes = parser.parse()
+        for lexeme in lexemes:
+            print(lexeme)
 
     if exit_code != 0:
         exit(exit_code)
