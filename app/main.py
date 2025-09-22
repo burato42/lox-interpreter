@@ -8,7 +8,10 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
 
     if len(sys.argv) < 3:
-        print("Usage: ./your_program.sh <command> <filename>\n Available commands: tokenize, parse", file=sys.stderr)
+        print(
+            "Usage: ./your_program.sh <command> <filename>\n Available commands: tokenize, parse",
+            file=sys.stderr,
+        )
         exit(1)
 
     command = sys.argv[1]

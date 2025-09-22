@@ -16,4 +16,3 @@ class Parser:
                 yield token.lexeme
             elif token.type == TokenType.NIL:
                 yield token.lexeme
-
