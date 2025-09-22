@@ -47,7 +47,8 @@ class TestParser:
             [
                 Token(TokenType.LEFT_PAREN, "(", None, 1),
                 Token(TokenType.STRING, '"bar"', "bar", 1),
-                Token(TokenType.RIGHT_PAREN, ")", None, 2),])
+                Token(TokenType.RIGHT_PAREN, ")", None, 2),
+            ]
+        )
         lexemes = parser.parse()
         assert list(lexemes) == ["(group ", "bar", ")"]
-
