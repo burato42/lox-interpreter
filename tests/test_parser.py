@@ -34,7 +34,9 @@ class TestParser:
             [
                 Token(TokenType.STRING, '"abc"', "abc", 1),
                 Token(TokenType.STRING, '"123"', "123", 1),
-                Token(TokenType.STRING, '"abc*&*U&D>=-123+!="', "abc*&*U&D>=-123+!=", 1),
+                Token(
+                    TokenType.STRING, '"abc*&*U&D>=-123+!="', "abc*&*U&D>=-123+!=", 1
+                ),
             ]
         )
         parsed = parser.parse()
