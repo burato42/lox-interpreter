@@ -27,7 +27,7 @@ class TestParser:
             ]
         )
         parsed = parser.parse()
-        assert list(parsed) == [Decimal("3.14"), Decimal("0.0"), Decimal("42.0")]
+        assert list(parsed) == ["3.14", "0.0", "42.0"]
 
     def test_strings(self):
         parser = Parser(
@@ -41,3 +41,13 @@ class TestParser:
         )
         parsed = parser.parse()
         assert list(parsed) == ["abc", "123", "abc*&*U&D>=-123+!="]
+
+    def test_groups(self):
+        parser = Parser(
+            [
+                Token(TokenType.LEFT_PAREN, "(", None, 1),
+                Token(TokenType.STRING, '"bar"', "bar", 1),
+                Token(TokenType.RIGHT_PAREN, ")", None, 2),])
+        lexemes = parser.parse()
+        assert list(lexemes) == ["(group ", "bar", ")"]
+

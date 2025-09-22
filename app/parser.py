@@ -18,6 +18,10 @@ class Parser:
             elif token.type == TokenType.NIL:
                 yield token.lexeme
             elif token.type == TokenType.NUMBER:
-                yield token.literal
+                yield str(token.literal)
             elif token.type == TokenType.STRING:
                 yield token.literal
+            elif token.type == TokenType.LEFT_PAREN:
+                yield token.lexeme + "group "
+            elif token.type == TokenType.RIGHT_PAREN:
+                yield token.lexeme

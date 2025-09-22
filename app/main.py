@@ -40,8 +40,7 @@ def main():
     if command == "parse":
         parser = Parser(tokens)
         lexemes = parser.parse()
-        for lexeme in lexemes:
-            print(lexeme)
+        print(''.join(list(lexemes)))
 
     if exit_code != 0:
         exit(exit_code)
