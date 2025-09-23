@@ -1,7 +1,5 @@
 from decimal import Decimal
 
-import pytest
-
 from app.parser import Parser
 from app.tokenization import Token, TokenType
 
@@ -15,8 +13,8 @@ class TestParser:
                 Token(TokenType.NIL, "nil", None, 3),
             ]
         )
-        lexemes = parser.parse()
-        assert list(lexemes) == ["true", "false", "nil"]
+        expression = parser.parse().traverse()
+        assert [el.value for el in expression] == ["true", "false", "nil"]
 
     def test_numbers(self):
         parser = Parser(
@@ -26,8 +24,8 @@ class TestParser:
                 Token(TokenType.NUMBER, "42", Decimal("42.0"), 1),
             ]
         )
-        parsed = parser.parse()
-        assert list(parsed) == ["3.14", "0.0", "42.0"]
+        expression = parser.parse().traverse()
+        assert [el.value for el in expression] == ["3.14", "0.0", "42.0"]
 
     def test_strings(self):
         parser = Parser(
@@ -39,8 +37,9 @@ class TestParser:
                 ),
             ]
         )
-        parsed = parser.parse()
-        assert list(parsed) == ["abc", "123", "abc*&*U&D>=-123+!="]
+        expression = parser.parse().traverse()
+
+        assert [el.value for el in expression] == ["abc", "123", "abc*&*U&D>=-123+!="]
 
     def test_groups(self):
         parser = Parser(
@@ -50,5 +49,5 @@ class TestParser:
                 Token(TokenType.RIGHT_PAREN, ")", None, 2),
             ]
         )
-        lexemes = parser.parse()
-        assert list(lexemes) == ["(group ", "bar", ")"]
+        expression = parser.parse().traverse()
+        assert [el.value for el in expression] == ["(group ", "bar", ")"]
